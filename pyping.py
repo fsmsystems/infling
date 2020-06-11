@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import subprocess,requests
+import subprocess,requests,platform
 from influxdb import InfluxDBClient
 
 #pip install influxdb
@@ -17,6 +17,11 @@ hostping=['8.8.8.8','1.1.1.1']
 http_urls=['https://www.google.es','https://lo.caixabank.es']
 timeout=60
 
+# whoami?
+location=platform.node()
+
+print('Testing from: ' +location)
+
 for host in hostping:
    client = InfluxDBClient(host=influxdb_host, port=port)
    client.create_database('pyping')
@@ -27,7 +32,7 @@ for host in hostping:
    print('ping: '+host+' time: ' + str(ping_parse_time) +' ms')
    pingEvent = [{"measurement":"pings",
            "tags": {
-               "Location": "BCN",
+               "Location": location,
                "RemoteHost": host,
 
            },
@@ -51,7 +56,7 @@ for url in http_urls:
       # Construct the json for influxdb
       httpEvent = [{"measurement":"http_request",
               "tags": {
-                  "Location": "BCN",
+                  "Location": location,
                   "Url": url,
 
               },
