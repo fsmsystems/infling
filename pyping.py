@@ -1,6 +1,7 @@
 #!/usr/bin/python3
-import subprocess
+import subprocess,requests
 from influxdb import InfluxDBClient
+
 #pip install influxdb
 #python3-influxdb
 
@@ -12,6 +13,10 @@ dbname='pyping'
 #Ping host
 hostping=['8.8.8.8','1.1.1.1']
 
+#http checks
+http_urls=['https://www.google.es','https://lo.caixabank.es']
+timeout=60
+
 for host in hostping:
    client = InfluxDBClient(host=influxdb_host, port=port)
    client.create_database('pyping')
@@ -19,9 +24,7 @@ for host in hostping:
 
    ping_response = subprocess.Popen(["/bin/ping", "-c1", host], stdout=subprocess.PIPE).stdout.read()
    ping_parse_time = float(str(ping_response).split('time=')[1].split(' ms')[0])
-   print(ping_parse_time)
-
-   #client.write(['time='+ping_parse_time+'host='+host],{'db':dbname},204,'line')
+   print('ping: '+host+' time: ' + str(ping_parse_time) +' ms')
    pingEvent = [{"measurement":"pings",
            "tags": {
                "Location": "BCN",
@@ -36,4 +39,45 @@ for host in hostping:
            ]
 
    client.write_points(pingEvent)
+
+for url in http_urls:
+   # Checks with get 
+   response = requests.get(url,timeout=timeout)
+   # Evalueate if is 200 ok response
+   if (response.status_code == requests.codes.ok):
+      # Get the elapsed response time 
+      rtime = response.elapsed.total_seconds()
+      print('http request: '+url+' time: '+str(rtime)+' s')
+      # Construct the json for influxdb
+      httpEvent = [{"measurement":"http_request",
+              "tags": {
+                  "Location": "BCN",
+                  "Url": url,
+
+              },
+              "fields":
+              {
+              "Response_time":rtime
+              }
+              }
+              ]
+
+      client.write_points(httpEvent)
+   else:
+      # In case of HTTP response is not 200
+      print('Error HTTP')
+      httpEvent = [{"measurement":"http_request",
+              "tags": {
+                  "Location": "BCN",
+                  "Url": url,
+
+              },
+              "fields":
+              {
+              "Response_time":'NULL'
+              }
+              }
+              ]
+
+      client.write_points(httpEvent)
 
