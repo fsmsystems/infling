@@ -14,7 +14,7 @@ dbname='pyping'
 hostping=['8.8.8.8','1.1.1.1']
 
 #http checks
-http_urls=['https://www.google.es','https://lo.caixabank.es']
+http_urls=['https://www.google.es','https://lo.caixabank.es','http://www.tintaroja.cat','https://m.caixabank.es']
 timeout=60
 
 # whoami?
