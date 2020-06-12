@@ -23,7 +23,7 @@ location=platform.node()
 print('Testing from: ' +location)
 
 # resolvehost
-resolvehost=['www.caixabank.es','www.google.es','m.caixabank.es','www.yahoo.es']
+resolvehost = ['www.caixabank.es','www.google.es','m.caixabank.es','www.yahoo.es']
 
 
 # Influxdb Connection
