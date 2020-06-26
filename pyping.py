@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import subprocess,requests,platform,time,socket
 from influxdb import InfluxDBClient
+from dns import resolver
 
 #pip install influxdb
 #python3-influxdb
@@ -51,6 +52,66 @@ for r in resolvehost:
            ]
 
    client.write_points(dnsEvent)
+
+
+# Resolbe time by nameserber
+d = ['8.8.8.8']
+for r in resolvehost:
+      res = resolver.Resolver()
+      res.nameservers = d
+      dns_start = time.time()
+      answers = res.query(r)
+      dns_end = time.time()
+      dns_end = time.time()
+      dns_dif = dns_end - dns_start
+      print('Resolving with '+d[0]+': '+r+' in: ' + str(dns_dif) +'')
+      dnsEvent = [{"measurement":"dns",
+                "tags": {
+                    "Location": location,
+                    "RemoteHost": r,
+                    "Resolver": d[0], 
+     
+                },
+                "fields":
+                {
+                "dnstime":dns_dif
+                }
+                }
+                ]
+     
+      client.write_points(dnsEvent)
+
+
+d = ['1.1.1.1']
+for r in resolvehost:
+      res = resolver.Resolver()
+      res.nameservers = d
+      dns_start = time.time()
+      answers = res.query(r)
+      dns_end = time.time()
+      dns_end = time.time()
+      dns_dif = dns_end - dns_start
+      print('Resolving with '+d[0]+': '+r+' in: ' + str(dns_dif) +'')
+      dnsEvent = [{"measurement":"dns",
+                "tags": {
+                    "Location": location,
+                    "RemoteHost": r,
+                    "Resolver": d[0],
+     
+                },
+                "fields":
+                {
+                "dnstime":dns_dif
+                }
+                }
+                ]
+     
+      client.write_points(dnsEvent)
+
+
+for rdata in answers:
+    print (rdata.address)
+
 
 
 for host in hostping:
