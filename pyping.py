@@ -15,7 +15,7 @@ dbname='pyping'
 hostping=['8.8.8.8','1.1.1.1']
 
 # http checks
-http_urls=['https://www.google.es','https://lo.caixabank.es','http://www.tintaroja.cat','https://m.caixabank.es']
+http_urls=['https://www.google.es','http://www.tintaroja.cat']
 timeout=60
 
 # whoami?
@@ -24,7 +24,7 @@ location=platform.node()
 print('Testing from: ' +location)
 
 # resolvehost
-resolvehost = ['www.caixabank.es','www.google.es','m.caixabank.es','www.yahoo.es']
+resolvehost = ['www.google.es','www.yahoo.es']
 
 
 # Influxdb Connection
